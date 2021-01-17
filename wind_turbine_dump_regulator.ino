@@ -1,6 +1,9 @@
 /* Wind Turbine Dump Regulator
  * by: Travis Farmer (www.tjfhome.net)
  */
+#include <Arduino.h>
+
+
 
 int maxVolts = 50; // connect secondary dump load, and disconnect charge controller  (max 60v MOSFET)
 int regMaxVolts = 45; // upper limit to PWM. full-on dump load.
