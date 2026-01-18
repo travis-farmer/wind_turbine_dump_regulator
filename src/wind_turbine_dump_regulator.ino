@@ -4,7 +4,7 @@
 #include <ModbusRTUSlave.h>
 
 const uint8_t dePin = 2;
-ModbusRTUSlave modbus(Serial1, dePin);
+ModbusRTUSlave modbus(Serial, dePin);
 int regMaxVolts = 45; // upper limit to PWM. full-on dump load.
 int regStartVolts = 35; // start PWM to vary dump load.
 int vdUpper = 10000; // 10Kohm
@@ -29,7 +29,7 @@ void setup() {
   // put your setup code here, to run once:
   pinMode(pinDumpPWM,OUTPUT); digitalWrite(pinDumpPWM,LOW);
   pinMode(dePin,OUTPUT); digitalWrite(dePin,LOW);
-  Serial1.begin(9600);
+  Serial.begin(9600);
   modbus.configureCoils(coils, 1);                       // bool array of coil values, number of coils
   modbus.configureDiscreteInputs(discreteInputs, 1);     // bool array of discrete input values, number of discrete inputs
   modbus.configureHoldingRegisters(holdingRegisters, 2); // unsigned 16 bit integer array of holding register values, number of holding registers
@@ -47,9 +47,10 @@ void loop() {
     int curVolts = vdCalculator(analogRead(0),vdUpper,vdLower);
     int curPwm = map(curVolts,regStartVolts,regMaxVolts,0,255);
     analogWrite(pinDumpPWM,curPwm);
+    inputRegisters[0] = curVolts;
+    inputRegisters[1] = curPwm;
   }
-  inputRegisters[0] = curVolts;
-  inputRegisters[1] = curPwm;
+  
   
   modbus.poll();
 }
